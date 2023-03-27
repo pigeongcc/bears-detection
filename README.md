@@ -77,9 +77,7 @@ You can find the code for fine-tuning in the second notebook.
 
 ## Object Detection
 
-**YOLOv8** was trained to detect brown bears.
-
-A baseline model was trained for 40 epochs on a given dataset without augmentations (resized to 640x640). The baseline also had no ResNet "filtering". It shown 55 public score.
+I trained **YOLOv8** to detect bears. It's a SOTA model for object detection.
 
 The best results were achieved after training for 120 epochs on a final dataset version (the one described above). It gave a public score of 16.
 
