@@ -29,7 +29,7 @@ I used the service for the following:
 
 Original training sample             |  Augmented training sample
 :-------------------------:|:-------------------------:
-<img src="https://user-images.githubusercontent.com/48735488/228033729-9ec38692-cddd-433c-91a7-db277017a0b3.png" width=65% height=65%>  |  <img src="https://user-images.githubusercontent.com/48735488/228034019-1bafca20-52b6-45cc-8560-64e10b036088.png" width=65% height=65%>
+<img src="https://user-images.githubusercontent.com/48735488/228058686-9c378bcf-3213-4c2c-9463-5d38beb176da.png" width=65% height=65%>  |  <img src="https://user-images.githubusercontent.com/48735488/228058764-d5b7f492-7b10-4d6c-8bf8-1923e1cabe02.png" width=65% height=65%>
 
 ## Dataset Complement
 
