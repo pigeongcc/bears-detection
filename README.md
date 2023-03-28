@@ -102,6 +102,8 @@ Dataset and YOLOv8 metrics:
 |5                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |70      |   0.956    | 1.0       |   0.993    |  0.62    |
 |6                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |120     |   0.875    | 1.0       |   0.982    |  0.691   |
 
+Further training of YOLOv8 up to 250 epochs only deteriorated the results.
+
 Model and competition score:
 
 |YOLOv8 Model ID   |Binary Classification|Public Score |Private Score |Comments|
