@@ -53,7 +53,7 @@ Original test samples             |  Generated training samples
 
 - No test set data is present in the dataset.
 
-- I also corrected a couple of mistakes in initial training set labeling.
+- I also corrected a couple of mistakes in the initial training set labeling.
 
 ## Baseline
 
@@ -65,9 +65,9 @@ You can find the scores and metrics values for all the tested models in the end 
 
 ## Binary Classification
 
-I decided to help YOLO by "filtering out" the images without bears. For this purpose, I trained **a binary classifier with high recall value**.
+I decided to help YOLO by "filtering out" the images without brown bears. For this purpose, I trained **a binary classifier with high recall value**.
 
-I chose **ResNet152** as it's a strong CNN architecture and fine-tuned it to classify if there is a brown bear on an image, or not. The last *conv* block and a fully-connected head of ResNet152 were fine-tuned (in total, .. parameters out of ).
+I chose **ResNet152** as it's a strong CNN architecture and fine-tuned it to classify if there is a brown bear on an image, or not. The last *conv* block and a fully-connected head of ResNet152 were fine-tuned (in total, 14968834/58147906 parameters, or 26%).
 
 The unfreezed part of the ResNet152 is highlighted with red:
 <img src="https://user-images.githubusercontent.com/48735488/228044361-05fc68c0-47c3-4fcf-b6db-96c1b5f7f72a.png" width=80% height=80%>
@@ -102,12 +102,10 @@ Dataset and YOLOv8 metrics:
 |5                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |70      |   0.956    | 1.0       |   0.993    |  0.62    |
 |6                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |120     |   0.875    | 1.0       |   0.982    |  0.691   |
 
-Further training of YOLOv8 up to 250 epochs only deteriorated the results.
-
 Model and competition score:
 
 |YOLOv8 Model ID   |Binary Classification|Public Score |Private Score |Comments|
-|:----------------:|:-------------------:|:-----------:|:------------:|:-------|
+|:----------------:|:-------------------:|:-----------:|:------------:|:------:|
 |1                 |   :x:               | 73.3        | 94.8         ||
 |2                 |   :x:               | 71.0        | 95.0         ||
 |3                 |   :x:               | 71.0        | 95.0         ||
@@ -119,6 +117,8 @@ Model and competition score:
 |4                 |   :white_check_mark:| 57.0        | 43.1         ||
 |**5**             |   :white_check_mark:| **18.7**    | **19.1**     |**Private Top-2**|
 |**6**             |   :white_check_mark:| **16.8**    | **46.7**     |**Public Top-1** |
+
+Further training of YOLOv8 up to 250 epochs only deteriorated the scores.
 
 ### Observations
 
@@ -134,4 +134,5 @@ There are ways to achieve even lower score:
 
 - Complement the training set more, with both positive and negative samples.
 - Search hyperparameters for ResNet152 training. 
+- Even if the CNN doesn't filter ideally, we can decrease the number of misdetections by playing with `conf` parameter of YOLOv8.
 - Try to find useful augmentations.
