@@ -38,9 +38,9 @@ After inferencing, I noticed several mistaken and low-confidence detections. I d
 
 For image generation, I used [a stable diffusion model](https://stablediffusionweb.com/). Probably, the same model was used to collect the competition dataset. To the eye, generated samples are very similar to the dataset ones.
 
-But that's not how the NNs work. I suppose the competition organizers added noise to the data to change its distribution, so that tricks like dataset complement wouldn't work well.
+But that's not how the NNs work. I suppose the competition organizers could add noise to change the data distribution, so that tricks like dataset complement wouldn't work well.
 
-Nevertheless, experiments shown that dataset complement helped to decreased the score (the less - the better).
+Nevertheless, experiments shown that dataset complement helped to decrease the score (the less - the better).
 
 Original test samples             |  Generated training samples
 :-------------------------:|:-------------------------:
@@ -91,6 +91,8 @@ You can find the code for YOLOv8 training and inference in *brown-bears-detectio
 
 # Results
 
+Dataset and YOLOv8 metrics:
+
 |YOLOv8 Model ID  |Image Size  |Augmented         |Complemented      |Train-valid Instances |Epochs  | Precision  | Recall    |   mAP50    | mAP50-95 |
 |:---------------:|:----------:|:----------------:|:----------------:|:--------------------:|:------:|:-----------|:---------:|:-----------|:--------:|
 |1                |   320x320  |:x:               |:x:               |     270-69           |30      |  0.797     |  0.9      |   0.938    |  0.901   |
@@ -99,6 +101,8 @@ You can find the code for YOLOv8 training and inference in *brown-bears-detectio
 |4                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |30      |  0.911     |   0.955   |   0.976    |  0.682   |
 |5                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |70      |   0.956    | 1.0       |   0.993    |  0.62    |
 |6                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |120     |   0.875    | 1.0       |   0.982    |  0.691   |
+
+Model and competition score:
 
 |YOLOv8 Model ID   |Binary Classification|Public Score |Private Score |Comments|
 |:----------------:|:-------------------:|:-----------:|:------------:|:-------|
@@ -117,14 +121,15 @@ You can find the code for YOLOv8 training and inference in *brown-bears-detectio
 ### Observations
 
 - Increasing the image size **from 320 to 640** gave some score decrease.
-- Increasing the image size from 640 to 896 and augmentations seem to have no effect on the score.
-- Binary classification significantly decreases the score.
-- 
+- Increasing the image size **from 640 to 896 and chosen augmentations** seem to have **no effect** on the score.
+- **Binary classification** significantly decreases the score.
+- **Dataset complement** helps decreasing the score.
+- The model at the last row has such a high private score because ResNet classified a couple of dogs and polar bears images from the test set as positive ones. The CNN should aim at **Precision increase keeping the Recall as high as possible**.
 
 # Space for improvement
 
 There are ways to achieve even lower score:
 
 - Complement the training set more, with both positive and negative samples.
-- Search hyperparameters for ResNet152 training. Model 6 has such a high private score because ResNet classified a couple of dogs and polar bears images as positive ones. We should aim at Precision increase without change in Recall.
+- Search hyperparameters for ResNet152 training. 
 - Try to find useful augmentations.
