@@ -88,18 +88,18 @@ You can find the code for YOLOv8 training and inference in *brown-bears-detectio
 поделать late submissions: посравнивать модели по метрикам на валиде и паблик прайват скорах на тесте
 йоло или резнет+йоло / число эпох / датасет
 
-|Detection Model     |Dataset    |Augmentations|Complement|Train-valid instances   | Precision  | Recall    |   mAP50    | mAP50-95 |
-|:--------:|:---------|:--------|:---|:-----|:-----------|:---------:|:-----------|:--------:|
-|yolov8-raw-30ep     |   Raw (no augm., resized to 640x640) |Augmentations|Complement        |     28     |  0.599     |  0.61     |   0.568    |  0.211   |
-|book      |   5      |Augmentations|Complement |     15     |  0.719     | 0.682     |   0.675    |   0.24   |
-|car       |   5     |Augmentations|Complement  |     13     |   0.48     | 0.538     |   0.461    |  0.182   |
+|YOLOv8 Model ID  |Augmented |Complemented |Train-valid Instances |Epochs  | Precision  | Recall    |   mAP50    | mAP50-95 |
+|:---------------:|:-----------|:--------:|:-----------:|:--------------------:|:------:|:-----------|:---------:|:-----------|:--------:|
+|1                |   640x640  |-         |-            |     280-80           |30      |  0.599     |  0.61     |   0.568    |  0.211   |
+|2                |   640x640  |+         |-            |     15               |        |  0.719     | 0.682     |   0.675    |   0.24   |
+|3                |   640x640  |+         |+            |     13               |        |   0.48     | 0.538     |   0.461    |  0.182   |
 
 
-|Model     |Dataset    |Instances   | Precision  | Recall    |   mAP50    | mAP50-95 |
-|:--------:|:---------|:----------:|:-----------|:---------:|:-----------|:--------:|
-|all       |   5      |     28     |  0.599     |  0.61     |   0.568    |  0.211   |
-|book      |   5      |     15     |  0.719     | 0.682     |   0.675    |   0.24   |
-|car       |   5      |     13     |   0.48     | 0.538     |   0.461    |  0.182   |
+|YOLOv8 Model ID |Binary Classification |Public Score |Private Score| Recall    |   mAP50    | mAP50-95 |
+|:--------------:|:---------------------|:-----------:|:------------|:---------:|:-----------|:--------:|
+|1               |   -                  |     28      |  0.599      |  0.61     |   0.568    |  0.211   |
+|1               |   +                  |     15      |  0.719      | 0.682     |   0.675    |   0.24   |
+|2               |   +                  |     13      |   0.48      | 0.538     |   0.461    |  0.182   |
 
 # Space for improvements
 
