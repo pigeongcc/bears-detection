@@ -33,13 +33,13 @@ Original training sample             |  Augmented training sample
 
 ## Dataset Complement
 
-After inferencing, I noticed several mistaken and low-confidence detections. I decided to **complement** the dataset by adding images with similar scenarios, e.g. "a brown bear hid behind the tree". In total, 20 * 3 = 60 new training samples were added to the dataset.
+After inferencing, I noticed several mistaken and low-confidence detections. I decided to **complement** the dataset by adding images with similar scenarios, e.g. *"a brown bear hid behind the tree"*. In total, 20 * 3 = 60 new training samples were added to the dataset.
 
 For image generation, I used [a stable diffusion model](https://stablediffusionweb.com/). Probably, the same model was used to collect the competition dataset. To the eye, generated samples are very similar to the dataset ones.
 
 But that's not how the NNs work. I suppose the competition organizers added noise to the data to change its distribution, so that tricks like dataset complement wouldn't work well.
 
-But seems like supplemnting helped me to correct the mistakes.
+??? results
 
 Original test samples             |  Generated training samples
 :-------------------------:|:-------------------------:
@@ -48,7 +48,7 @@ Original test samples             |  Generated training samples
 
 ### Link to the Dataset
 
-The final dataset version: [link](https://universe.roboflow.com/mydatasets-bqwxe/kaggle-kontur/dataset/8/images/?split=train)
+The final dataset version: [link](https://universe.roboflow.com/mydatasets-bqwxe/kaggle-kontur/dataset/8/images/?split=train).
 
 No test set data is present in the dataset.
 
@@ -56,36 +56,50 @@ No test set data is present in the dataset.
 
 As a starting point, I trained **YOLOv8** for 40 epochs on a raw dataset. The data had no augmentations, it was only resized to 640x640.
 
-You can check out the scores and metrics values for all the tested models in the end of this readme.
+You can check out the scores and metrics values for all the tested models in the end of this Readme.
 
 ## Binary Classification
 
-I decided to help YOLO by "filtering out" the images without bears. For this purpose, I trained a binary classifier with high recall value.
+I decided to help YOLO by "filtering out" the images without bears. For this purpose, I trained **a binary classifier with high recall value**.
 
-I chose **ResNet152** as a strong CNN architecture and fine-tuned it to classify if there is a brown bear on an image, or not. The last *conv* block and a fully-connected head of ResNet152 were fine-tuned (in total, .. parameters out of ).
+I chose **ResNet152** as it's a strong CNN architecture and fine-tuned it to classify if there is a brown bear on an image, or not. The last *conv* block and a fully-connected head of ResNet152 were fine-tuned (in total, .. parameters out of ).
 
-The unfreezed part of the CNN is highlighted with red:
+The unfreezed part of the ResNet152 is highlighted with red:
 <img src="https://user-images.githubusercontent.com/48735488/228044361-05fc68c0-47c3-4fcf-b6db-96c1b5f7f72a.png" width=80% height=80%>
 
 During fine-tuning, I focused on Recall metric, since it's important for a CNN to only perform a **preliminary filtering of images**.
 
 CNN should "help" an object detection model by **discarding the images with no brown bears**. It shouldn't even have a goal of 100% accurate predictions, because such a good result may imply a risk of decreasing recall on unseen data.
 
-I used the same dataset for both ResNet and YOLOv8 training.
+I used the final dataset version (the link is above) for ResNet152 fine-tuning.
 
-You can find the code for fine-tuning in the second notebook.
+You can find the code for fine-tuning in *resnet-fine-tuning.ipynb*.
 
 ## Object Detection
 
-I trained **YOLOv8** to detect bears. It's a SOTA model for object detection.
+I chose **YOLOv8** model to detect bears. It's a SOTA model for object detection.
 
-The best results were achieved after training for 120 epochs on a final dataset version (the one described above). It gave a public score of 16.
+The best results were achieved on the final dataset version, with the pipeline being: binary classification and YOLOv8 trained for 120 epochs.
+
+You can find the code for YOLOv8 training and inference in *brown-bears-detection.ipynb*.
 
 # Results
 
 поделать late submissions: посравнивать модели по метрикам на валиде и паблик прайват скорах на тесте
 йоло или резнет+йоло / число эпох / датасет
 
+|Detection Model     |Dataset    |Augmentations|Complement|Train-valid instances   | Precision  | Recall    |   mAP50    | mAP50-95 |
+|:--------:|:---------|:--------|:---|:-----|:-----------|:---------:|:-----------|:--------:|
+|yolov8-raw-30ep     |   Raw (no augm., resized to 640x640) |Augmentations|Complement        |     28     |  0.599     |  0.61     |   0.568    |  0.211   |
+|book      |   5      |Augmentations|Complement |     15     |  0.719     | 0.682     |   0.675    |   0.24   |
+|car       |   5     |Augmentations|Complement  |     13     |   0.48     | 0.538     |   0.461    |  0.182   |
+
+
+|Model     |Dataset    |Instances   | Precision  | Recall    |   mAP50    | mAP50-95 |
+|:--------:|:---------|:----------:|:-----------|:---------:|:-----------|:--------:|
+|all       |   5      |     28     |  0.599     |  0.61     |   0.568    |  0.211   |
+|book      |   5      |     15     |  0.719     | 0.682     |   0.675    |   0.24   |
+|car       |   5      |     13     |   0.48     | 0.538     |   0.461    |  0.182   |
 
 # Space for improvements
 
