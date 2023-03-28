@@ -19,13 +19,14 @@ I used [**Roboflow**](https://roboflow.com/) service to manage data. Roboflow pr
 I used the service for the following:
 
 - Data **storage and download API**.
-- **Train-valid split** of the training set: 80% (290 images) and 20% (68 images).
-- Data **augmentations** (increased the training set size by 3 times, up to 870 images):
+- **Train-valid split** of the training set: 80% (290 images) and 20% (69 images).
+- Data **augmentations** (increased the training set size by 3 times, up to 810 images):
     - Resize: fit in 896x896 (black edges)
     - Horizontal flip
     - Random crop: from 0% to 25%
     - Rotation: between -12° and +12°
     - Shear: ±5° horizontal, ±5° vertical
+- Data **labeling** of newly generated data (increased the training set size by 20 * 3 = 60 images)
 
 Original training sample             |  Augmented training sample
 :-------------------------:|:-------------------------:
@@ -51,6 +52,8 @@ Original test samples             |  Generated training samples
 The final dataset version: [link](https://universe.roboflow.com/mydatasets-bqwxe/kaggle-kontur/dataset/8/images/?split=train).
 
 No test set data is present in the dataset.
+
+I also corrected a couple of mistakes in initial training set labeling.
 
 ## Baseline
 
@@ -88,18 +91,20 @@ You can find the code for YOLOv8 training and inference in *brown-bears-detectio
 поделать late submissions: посравнивать модели по метрикам на валиде и паблик прайват скорах на тесте
 йоло или резнет+йоло / число эпох / датасет
 
-|YOLOv8 Model ID  |Augmented |Complemented |Train-valid Instances |Epochs  | Precision  | Recall    |   mAP50    | mAP50-95 |
+|YOLOv8 Model ID  |Image Size  |Augmented |Complemented |Train-valid Instances |Epochs  | Precision  | Recall    |   mAP50    | mAP50-95 |
 |:---------------:|:-----------|:--------:|:-----------:|:--------------------:|:------:|:-----------|:---------:|:-----------|:--------:|
-|1                |   640x640  |-         |-            |     280-80           |30      |  0.599     |  0.61     |   0.568    |  0.211   |
-|2                |   640x640  |+         |-            |     15               |        |  0.719     | 0.682     |   0.675    |   0.24   |
-|3                |   640x640  |+         |+            |     13               |        |   0.48     | 0.538     |   0.461    |  0.182   |
+|1                |   320x320  |-         |-            |     270-69           |30      |  0.797     |  0.9      |   0.938    |  0.901   |
+|2                |   640x640  |-         |-            |     270-69           |30      |  0.804     |  0.9      |   0.921    |  0.895   |
+|3                |   896x896  |+         |-            |     810-69           |30      |   0.48     | 0.538     |   0.461    |  0.182   |
 
 
 |YOLOv8 Model ID |Binary Classification |Public Score |Private Score| Recall    |   mAP50    | mAP50-95 |
 |:--------------:|:---------------------|:-----------:|:------------|:---------:|:-----------|:--------:|
-|1               |   -                  |     28      |  0.599      |  0.61     |   0.568    |  0.211   |
-|1               |   +                  |     15      |  0.719      | 0.682     |   0.675    |   0.24   |
-|2               |   +                  |     13      |   0.48      | 0.538     |   0.461    |  0.182   |
+|1               |   -                  | 73.3        |  94.8       |  0.61     |   0.568    |  0.211   |
+|2               |   -                  | 71.0        |  95.0       |  0.61     |   0.568    |  0.211   |
+|2               |   +                  | 61.2        |  61.2       |  0.61     |   0.568    |  0.211   |
+|1               |   -                  | 73.3        |  94.8       |  0.61     |   0.568    |  0.211   |
+|1               |   -                  | 73.3        |  94.8       |  0.61     |   0.568    |  0.211   |
 
 # Space for improvements
 
