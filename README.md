@@ -29,7 +29,7 @@ I used the service for the following:
 
 Original training sample             |  Augmented training sample
 :-------------------------:|:-------------------------:
-<img src="https://user-images.githubusercontent.com/48735488/228033729-9ec38692-cddd-433c-91a7-db277017a0b3.png" width=65% height=65%>  |  <img src="https://user-images.githubusercontent.com/48735488/228034019-1bafca20-52b6-45cc-8560-64e10b036088.png" width=65% height=65%>
+<img src="https://user-images.githubusercontent.com/48735488/228058686-9c378bcf-3213-4c2c-9463-5d38beb176da.png" width=65% height=65%>  |  <img src="https://user-images.githubusercontent.com/48735488/228058764-d5b7f492-7b10-4d6c-8bf8-1923e1cabe02.png" width=65% height=65%>
 
 ## Dataset Complement
 
@@ -77,9 +77,7 @@ You can find the code for fine-tuning in the second notebook.
 
 ## Object Detection
 
-**YOLOv8** was trained to detect brown bears.
-
-A baseline model was trained for 40 epochs on a given dataset without augmentations (resized to 640x640). The baseline also had no ResNet "filtering". It shown 55 public score.
+I trained **YOLOv8** to detect bears. It's a SOTA model for object detection.
 
 The best results were achieved after training for 120 epochs on a final dataset version (the one described above). It gave a public score of 16.
 
