@@ -2,7 +2,7 @@
 
 *Help ResNet and YOLO find bears...*
 
-<img src="https://user-images.githubusercontent.com/48735488/228031264-25ec3d75-0c82-4018-b2e0-9286ecb29aa9.png" width=35% height=35%>
+<img src="https://user-images.githubusercontent.com/48735488/228231942-40697657-31ba-4d0b-bfda-37df918723f3.png" width=35% height=35%>
 
 # Task Description
 
@@ -40,7 +40,7 @@ For image generation, I used [a stable diffusion model](https://stablediffusionw
 
 But that's not how the NNs work. I suppose the competition organizers added noise to the data to change its distribution, so that tricks like dataset complement wouldn't work well.
 
-??? results
+Nevertheless, experiments shown that dataset complement helped to decreased the score (the less - the better).
 
 Original test samples             |  Generated training samples
 :-------------------------:|:-------------------------:
@@ -49,17 +49,19 @@ Original test samples             |  Generated training samples
 
 ### Link to the Dataset
 
-The final dataset version: [link](https://universe.roboflow.com/mydatasets-bqwxe/kaggle-kontur/dataset/8/images/?split=train).
+- The final dataset version: [link](https://universe.roboflow.com/mydatasets-bqwxe/kaggle-kontur/dataset/8/images/?split=train).
 
-No test set data is present in the dataset.
+- No test set data is present in the dataset.
 
-I also corrected a couple of mistakes in initial training set labeling.
+- I also corrected a couple of mistakes in initial training set labeling.
 
 ## Baseline
 
-As a starting point, I trained **YOLOv8** for 40 epochs on a raw dataset. The data had no augmentations, it was only resized to 640x640.
+I chose **YOLOv8** model to detect bears. It's a SOTA model for object detection with simple interface.
 
-You can check out the scores and metrics values for all the tested models in the end of this Readme.
+As a baseline solution, I trained **YOLOv8** for 30 epochs on a raw dataset. The data had no augmentations, it was only resized to 320x320.
+
+You can find the scores and metrics values for all the tested models in the end of this Readme.
 
 ## Binary Classification
 
@@ -70,51 +72,59 @@ I chose **ResNet152** as it's a strong CNN architecture and fine-tuned it to cla
 The unfreezed part of the ResNet152 is highlighted with red:
 <img src="https://user-images.githubusercontent.com/48735488/228044361-05fc68c0-47c3-4fcf-b6db-96c1b5f7f72a.png" width=80% height=80%>
 
-During fine-tuning, I focused on Recall metric, since it's important for a CNN to only perform a **preliminary filtering of images**.
+During fine-tuning, I focused on **Recall metric**, since it's important for a CNN to only perform a **preliminary filtering of images**.
 
 CNN should "help" an object detection model by **discarding the images with no brown bears**. It shouldn't even have a goal of 100% accurate predictions, because such a good result may imply a risk of decreasing recall on unseen data.
 
 I used the final dataset version (the link is above) for ResNet152 fine-tuning.
 
-You can find the code for fine-tuning in *resnet-fine-tuning.ipynb*.
+The code for fine-tuning is present in *resnet-fine-tuning.ipynb*.
 
 ## Object Detection
 
-I chose **YOLOv8** model to detect bears. It's a SOTA model for object detection.
-
-The best results were achieved on the final dataset version, with the pipeline being: binary classification and YOLOv8 trained for 120 epochs.
+The best results were achieved with the following pipeline:
+- Using the final dataset version (image size 896x896, complemented, augmented) for both ResNet152 and YOLOv8 training.
+- "Filtering" the test set with the fine-tuned CNN.
+- Inferencing the output with YOLOv8 trained for 120 epochs.
 
 You can find the code for YOLOv8 training and inference in *brown-bears-detection.ipynb*.
 
 # Results
 
-поделать late submissions: посравнивать модели по метрикам на валиде и паблик прайват скорах на тесте
-йоло или резнет+йоло / число эпох / датасет
+|YOLOv8 Model ID  |Image Size  |Augmented         |Complemented      |Train-valid Instances |Epochs  | Precision  | Recall    |   mAP50    | mAP50-95 |
+|:---------------:|:----------:|:----------------:|:----------------:|:--------------------:|:------:|:-----------|:---------:|:-----------|:--------:|
+|1                |   320x320  |:x:               |:x:               |     270-69           |30      |  0.797     |  0.9      |   0.938    |  0.901   |
+|2                |   640x640  |:x:               |:x:               |     270-69           |30      |  0.804     |  0.9      |   0.921    |  0.895   |
+|3                |   896x896  |:white_check_mark:|:x:               |     810-69           |30      |  0.663     |   0.984   |   0.879    |  0.47    |
+|4                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |30      |  0.911     |   0.955   |   0.976    |  0.682   |
+|5                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |70      |   0.956    | 1.0       |   0.993    |  0.62    |
+|6                |   896x896  |:white_check_mark:|:white_check_mark:|     870-69           |120     |   0.875    | 1.0       |   0.982    |  0.691   |
 
-|YOLOv8 Model ID  |Image Size  |Augmented |Complemented |Train-valid Instances |Epochs  | Precision  | Recall    |   mAP50    | mAP50-95 |
-|:---------------:|:-----------|:--------:|:-----------:|:--------------------:|:------:|:-----------|:---------:|:-----------|:--------:|
-|1                |   320x320  |-         |-            |     270-69           |30      |  0.797     |  0.9      |   0.938    |  0.901   |
-|2                |   640x640  |-         |-            |     270-69           |30      |  0.804     |  0.9      |   0.921    |  0.895   |
-|3                |   896x896  |+         |-            |     810-69           |30      |  0.663     |   0.984   |   0.879    |  0.47    |
-|4 после лабы                |   896x896  |+         |+            |     870-69           |30      |   0.48     | 0.538     |   0.461    |  0.182   |
-|5                |   896x896  |+         |+            |     870-69           |70      |   0.956    | 1.0       |   0.993    |  0.62    |
-|6                |   896x896  |+         |+            |     870-69           |120     |   0.875    | 1.0       |   0.982    |  0.691   |
+|YOLOv8 Model ID   |Binary Classification|Public Score |Private Score |Comments|
+|:----------------:|:-------------------:|:-----------:|:------------:|:-------|
+|1                 |   :x:               | 73.3        | 94.8         ||
+|2                 |   :x:               | 71.0        | 95.0         ||
+|3                 |   :x:               | 71.0        | 95.0         ||
+|4                 |   :x:               | 87.9        | 57.1         ||
+|5                 |   :x:               | 51.0        | 90.2         ||
+|6                 |   :x:               | 44.4        | 72.0         ||
+|2                 |   :white_check_mark:| 61.2        | 61.2         ||
+|3                 |   :white_check_mark:| 61.2        | 61.2         ||
+|4                 |   :white_check_mark:| 57.0        | 43.1         ||
+|**5**             |   :white_check_mark:| **18.7**    | **19.1**     |**Private Top-2**|
+|**6**             |   :white_check_mark:| **16.8**    | **46.7**     |**Public Top-1** |
 
-после лабы:
-доучить 3 до 70 эпох, протестировать (зачем? вспомнить)
-поучить 4 до 30 или 70 эпох, протестировать
+### Observations
 
-|YOLOv8 Model ID   |Binary Classification   |Public Score |Private Score  |
-|:----------------:|:-----------------------|:-----------:|:--------------|
-|1                 |   -                    | 73.3        | 94.8          |
-|2                 |   -                    | 71.0        | 95.0          |
-|2                 |   +                    | 61.2        | 61.2          |
-|3                 |   -                    | 71.0        | 95.0          |
-|3                 |   +                    | 61.2        | 61.2          |
-|4 после лабы                 |   +                    | 73.3        | 94.8          |
-|**5               |   +                    | 18.7        | 19.1 (Private Top-2)**|
-|**6               |   +                    | 16.8 (Public Top-1)| 46.7        **|
+- Increasing the image size **from 320 to 640** gave some score decrease.
+- Increasing the image size from 640 to 896 and augmentations seem to have no effect on the score.
+- Binary classification significantly decreases the score.
+- 
 
-# Space for improvements
+# Space for improvement
 
-?
+There are ways to achieve even lower score:
+
+- Complement the training set more, with both positive and negative samples.
+- Search hyperparameters for ResNet152 training. Model 6 has such a high private score because ResNet classified a couple of dogs and polar bears images as positive ones. We should aim at Precision increase without change in Recall.
+- Try to find useful augmentations.
